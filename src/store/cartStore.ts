@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { CartItem, Product } from '@/types'
+import { CartItem, Product } from '@/src/types'
 
 // This is the brain of your shopping cart
 // It remembers what's in the cart across all pages
