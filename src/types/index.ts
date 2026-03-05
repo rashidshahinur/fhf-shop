@@ -1,11 +1,9 @@
-// This file defines what our data looks like
-// Think of it as describing the shape of everything
-
 export type Product = {
   id: string
   name: string
   slug: string
   price: number
+  original_price: number | null
   weight: string
   description: string
   image_url: string
@@ -33,7 +31,7 @@ export type Order = {
   address: string
   line_id: string
   total_amount: number
-  status: 'pending' | 'confirmed' | 'delivered' | 'cancelled'
+  status: string
   notes: string
   created_at: string
 }

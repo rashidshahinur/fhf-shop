@@ -1,6 +1,7 @@
 import { supabase } from "@/src/lib/supabase"
 import { Product, Category } from "@/src/types"
 import Link from "next/link"
+import AddToCartButton from "@/src/components/shop/AddToCartButton"
 
 async function getCategories() {
   const { data } = await supabase
@@ -10,13 +11,23 @@ async function getCategories() {
   return data as Category[]
 }
 
-async function getFeaturedProducts() {
+async function getSpecialOffers() {
+  const { data } = await supabase
+    .from("products")
+    .select("*")
+    .eq("is_active", true)
+    .not("original_price", "is", null)
+    .limit(10)
+  return data as Product[]
+}
+
+async function getMostSaleProducts() {
   const { data } = await supabase
     .from("products")
     .select("*")
     .eq("is_featured", true)
     .eq("is_active", true)
-    .limit(8)
+    .limit(10)
   return data as Product[]
 }
 
@@ -26,201 +37,207 @@ async function getLatestProducts() {
     .select("*")
     .eq("is_active", true)
     .order("created_at", { ascending: false })
-    .limit(4)
+    .limit(10)
   return data as Product[]
+}
+
+function ProductCard({ product }: { product: Product }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+      <Link href={"/shop/" + product.slug}>
+        <div className="bg-gray-50 h-44 flex items-center justify-center overflow-hidden relative">
+          {product.image_url ? (
+            <img
+              src={product.image_url}
+              alt={product.name}
+              className="w-full h-full object-cover hover:scale-105 transition-transform"
+            />
+          ) : (
+            <div className="text-6xl">🛍️</div>
+          )}
+        </div>
+      </Link>
+      <div className="p-3">
+        <Link href={"/shop/" + product.slug}>
+          <h3 className="text-sm font-semibold text-gray-800 hover:text-green-700 transition-colors leading-tight mb-1 line-clamp-2">
+            {product.name}
+          </h3>
+        </Link>
+        <p className="text-xs text-gray-400 mb-2">{product.weight}</p>
+        <div className="flex items-center gap-2 mb-3">
+          {product.original_price && (
+            <span className="text-xs text-gray-400 line-through">
+              ¥{product.original_price.toLocaleString()}
+            </span>
+          )}
+          <span className="text-green-700 font-bold text-sm">
+            ¥{product.price.toLocaleString()}
+          </span>
+        </div>
+        <AddToCartButton product={product} />
+      </div>
+    </div>
+  )
+}
+
+function SectionHeader({ title, href }: { title: string; href: string }) {
+  return (
+    <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-green-700">
+      <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wide">
+        {title}
+      </h2>
+      <Link
+        href={href}
+        className="text-xs font-semibold text-green-700 hover:underline uppercase"
+      >
+        View All
+      </Link>
+    </div>
+  )
 }
 
 export default async function HomePage() {
   const categories = await getCategories()
-  const featuredProducts = await getFeaturedProducts()
-  const latestProducts = await getLatestProducts()
+  const specialOffers = await getSpecialOffers()
+  const mostSale = await getMostSaleProducts()
+  const latest = await getLatestProducts()
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen">
 
-      <section className="bg-green-800 text-white py-16 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-block bg-yellow-500 bg-opacity-20 border border-yellow-400 text-yellow-300 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
-            Halal Certified — Japan Delivery Available
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Your Trusted Halal Store in Japan
-          </h1>
-          <p className="text-lg text-green-200 max-w-xl mx-auto mb-8">
-            Authentic halal products from Bangladesh, Indonesia, and beyond.
-            Delivered to your door anywhere in Japan.
+      {/* HERO BANNER */}
+      <div className="bg-green-800 text-white">
+        <div className="max-w-6xl mx-auto px-4 py-12 text-center">
+          <p className="text-green-300 text-sm font-semibold uppercase tracking-widest mb-3">
+            100% Halal Certified — Japan Delivery
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link href="/shop" className="bg-yellow-500 text-white font-bold px-8 py-3 rounded-xl hover:bg-yellow-600 transition-colors">
-              Shop Now
+          <h1 className="text-3xl md:text-5xl font-black mb-4">
+            Fatihah Halal Food
+          </h1>
+          <p className="text-green-200 mb-6 max-w-lg mx-auto text-sm md:text-base">
+            Authentic halal groceries from Bangladesh, Indonesia and beyond.
+            Delivered anywhere in Japan. Cash on Delivery available.
+          </p>
+          <div className="flex gap-3 justify-center flex-wrap">
+            <Link
+              href="/shop"
+              className="bg-yellow-500 text-white font-bold px-6 py-2.5 rounded-lg text-sm hover:bg-yellow-600 transition-colors"
+            >
+              SHOP NOW
             </Link>
-            <Link href="/how-to-order" className="border-2 border-white text-white font-bold px-8 py-3 rounded-xl hover:bg-white hover:text-green-800 transition-colors">
-              How to Order
+            <Link
+              href="/how-to-order"
+              className="bg-white text-green-800 font-bold px-6 py-2.5 rounded-lg text-sm hover:bg-gray-100 transition-colors"
+            >
+              HOW TO ORDER
             </Link>
           </div>
-        </div>
-      </section>
-
-      <div className="bg-green-700 text-white">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-center gap-6 text-sm font-medium">
-          <span>100% Halal Certified</span>
-          <span>|</span>
-          <span>Nationwide Japan Delivery</span>
-          <span>|</span>
-          <span>Physical Store in Japan</span>
-          <span>|</span>
-          <span>LINE Support Available</span>
-          <span>|</span>
-          <span>Cash on Delivery</span>
         </div>
       </div>
 
-      <section className="py-14 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-end justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-              Shop by Category
-            </h2>
-            <Link href="/shop" className="text-green-700 font-semibold text-sm hover:underline">
-              View All
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      {/* ANNOUNCEMENT BAR */}
+      <div className="bg-yellow-500 text-white text-center text-xs font-semibold py-2 px-4">
+        Free delivery on orders over ¥5,000 — Cash on Delivery available nationwide Japan
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-8">
+
+        {/* CATEGORY GRID */}
+        <div className="mb-10">
+          <SectionHeader title="Shop by Category" href="/shop" />
+          <div
+            className="grid gap-3"
+            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))" }}
+          >
             {categories && categories.map((cat) => (
               <Link
                 key={cat.id}
                 href={"/shop?category=" + cat.slug}
-                className="bg-white rounded-2xl p-5 text-center shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100"
+                className="bg-white border border-gray-200 rounded-lg p-3 text-center hover:border-green-500 hover:shadow-sm transition-all group"
               >
-                <div className="text-4xl mb-3">{cat.icon}</div>
-                <div className="text-sm font-semibold text-gray-800">{cat.name}</div>
+                <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">
+                  {cat.icon}
+                </div>
+                <div className="text-xs font-semibold text-gray-700 leading-tight">
+                  {cat.name}
+                </div>
               </Link>
             ))}
           </div>
         </div>
-      </section>
 
-      <section className="px-4 mb-14">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-yellow-500 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                Ramadan Special Offer
+        {/* SPECIAL OFFERS */}
+        {specialOffers && specialOffers.length > 0 && (
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-red-500">
+              <h2 className="text-lg font-bold text-gray-800 uppercase tracking-wide">
+                Special Offer
               </h2>
-              <p className="text-yellow-100 text-sm md:text-base max-w-md">
-                Stock up for Ramadan! Special bundles on dates, rice, spices and more.
-              </p>
-              <Link href="/shop" className="inline-block mt-4 bg-white text-yellow-600 font-bold px-6 py-2.5 rounded-xl hover:bg-yellow-50 transition-colors">
-                See Ramadan Deals
-              </Link>
-            </div>
-            <div className="bg-white rounded-2xl px-8 py-4 text-center flex-shrink-0">
-              <div className="text-yellow-500 font-black text-4xl">20%</div>
-              <div className="text-gray-500 text-sm font-semibold">OFF</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-14 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-end justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-              Most Popular
-            </h2>
-            <Link href="/shop" className="text-green-700 font-semibold text-sm hover:underline">
-              View All
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {featuredProducts && featuredProducts.map((product) => (
               <Link
-                key={product.id}
-                href={"/shop/" + product.slug}
-                className="bg-gray-50 rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1 border border-gray-100"
+                href="/shop"
+                className="text-xs font-semibold text-red-500 hover:underline uppercase"
               >
-                <div className="bg-green-50 h-40 flex items-center justify-center text-5xl">
-                  <span>🛍️</span>
-                </div>
-                <div className="p-4">
-                  <div className="text-xs text-gray-400 mb-1">{product.country}</div>
-                  <div className="text-sm font-semibold text-gray-800 mb-1 leading-tight">{product.name}</div>
-                  <div className="text-xs text-gray-400 mb-3">{product.weight}</div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-green-700 font-bold text-base">
-                      ¥{product.price.toLocaleString()}
-                    </span>
-                    <span className="bg-green-700 text-white text-xs px-2 py-1 rounded-lg font-semibold">
-                      Halal
-                    </span>
-                  </div>
-                </div>
+                View All
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-14 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-end justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-              Latest Arrivals
-            </h2>
-            <Link href="/shop" className="text-green-700 font-semibold text-sm hover:underline">
-              View All
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {latestProducts && latestProducts.map((product) => (
-              <Link
-                key={product.id}
-                href={"/shop/" + product.slug}
-                className="bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1 border border-gray-100"
-              >
-                <div className="bg-green-50 h-40 flex items-center justify-center text-5xl">
-                  <span>🆕</span>
-                </div>
-                <div className="p-4">
-                  <div className="text-xs text-green-600 font-semibold mb-1">New Arrival</div>
-                  <div className="text-sm font-semibold text-gray-800 mb-1 leading-tight">{product.name}</div>
-                  <div className="text-xs text-gray-400 mb-3">{product.weight}</div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-green-700 font-bold text-base">
-                      ¥{product.price.toLocaleString()}
-                    </span>
-                    <span className="bg-green-700 text-white text-xs px-2 py-1 rounded-lg font-semibold">
-                      Halal
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-14 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-gray-50 rounded-2xl p-8 border-l-4 border-green-500 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Follow Us on LINE</h3>
-              <p className="text-gray-500 text-sm max-w-md mb-4">
-                Get the latest offers, Ramadan deals, and halal news on LINE. Our team replies fast.
-              </p>
-              <div className="flex flex-col gap-1 text-sm text-gray-600">
-                <span>Exclusive LINE-only discount coupons</span>
-                <span>Ramadan and Eid special offers first</span>
-                <span>New product alerts and restocks</span>
-              </div>
             </div>
-            <Link href="/contact" className="flex-shrink-0 bg-green-500 text-white font-bold px-8 py-3 rounded-xl hover:bg-green-600 transition-colors">
-              Add FHF on LINE
-            </Link>
+            <div
+              className="grid gap-4"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}
+            >
+              {specialOffers.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        )}
 
+        {/* MOST SALE PRODUCTS */}
+        {mostSale && mostSale.length > 0 && (
+          <div className="mb-10">
+            <SectionHeader title="Most Sale Products" href="/shop" />
+            <div
+              className="grid gap-4"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}
+            >
+              {mostSale.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* LATEST PRODUCTS */}
+        {latest && latest.length > 0 && (
+          <div className="mb-10">
+            <SectionHeader title="Latest Products" href="/shop" />
+            <div
+              className="grid gap-4"
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))" }}
+            >
+              {latest.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* LINE CTA */}
+        <div className="bg-green-700 rounded-xl p-6 text-white flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+          <div>
+            <h3 className="font-bold text-lg mb-1">Follow us on LINE</h3>
+            <p className="text-green-200 text-sm">
+              Get exclusive deals, Ramadan offers and order updates on LINE
+            </p>
+          </div>
+          <Link
+            href="/contact"
+            className="flex-shrink-0 bg-white text-green-700 font-bold px-6 py-2.5 rounded-lg text-sm hover:bg-gray-100 transition-colors"
+          >
+            Add on LINE
+          </Link>
+        </div>
+
+      </div>
     </div>
   )
 }
