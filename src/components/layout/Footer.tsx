@@ -2,62 +2,126 @@ import Link from "next/link"
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-400 pt-12 pb-6">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+    <footer className="bg-gray-900 text-white">
 
-          <div className="md:col-span-1">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-9 h-9 bg-green-700 rounded-lg flex items-center justify-center text-white font-bold text-lg">F</div>
-              <div className="text-white font-bold text-sm">Fatihah Halal Food</div>
+      {/* MAIN FOOTER */}
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+
+          {/* BRAND */}
+          <div className="col-span-2 md:col-span-1">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="bg-green-600 text-white font-black text-lg w-9 h-9 rounded-lg flex items-center justify-center">
+                F
+              </div>
+              <div>
+                <div className="font-black text-white text-sm leading-tight">Fatihah Halal Food</div>
+                <div className="text-yellow-400 text-xs font-semibold">Japan Halal Store</div>
+              </div>
             </div>
-            <p className="text-sm leading-relaxed mb-4">
-              Your trusted halal grocery store in Japan. Serving Muslim communities with authentic products.
+            <p className="text-gray-400 text-xs leading-relaxed mb-4">
+              Japan's trusted halal grocery store. Authentic products from Bangladesh, Indonesia and beyond. Delivered nationwide.
             </p>
-            <div className="inline-flex items-center gap-2 bg-green-900 text-green-400 text-xs px-3 py-1.5 rounded-full">
-              100% Halal Certified
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Shop</h4>
             <div className="flex flex-col gap-2">
-              <Link href="/shop" className="text-sm hover:text-green-400 transition-colors">All Products</Link>
-              <Link href="/shop" className="text-sm hover:text-green-400 transition-colors">Rice and Grains</Link>
-              <Link href="/shop" className="text-sm hover:text-green-400 transition-colors">Spices and Masala</Link>
-              <Link href="/shop" className="text-sm hover:text-green-400 transition-colors">Halal Meat</Link>
-              <Link href="/shop" className="text-sm hover:text-green-400 transition-colors">Fish and Seafood</Link>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Help</h4>
-            <div className="flex flex-col gap-2">
-              <Link href="/how-to-order" className="text-sm hover:text-green-400 transition-colors">How to Order</Link>
-              <Link href="/how-to-order" className="text-sm hover:text-green-400 transition-colors">Delivery Info</Link>
-              <Link href="/contact" className="text-sm hover:text-green-400 transition-colors">Contact Us</Link>
-              <Link href="/contact" className="text-sm hover:text-green-400 transition-colors">FAQ</Link>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Connect</h4>
-            <div className="flex flex-col gap-3 text-sm">
-              <Link href="/contact" className="flex items-center gap-2 bg-green-500 text-white px-3 py-2 rounded-lg font-semibold">
-                Follow on LINE
+              <Link
+                href="/contact"
+                className="flex items-center gap-2 bg-green-500 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors w-fit"
+              >
+                💬 Follow on LINE
               </Link>
-              <p>Based in Japan</p>
-              <p>Serving Muslim Communities</p>
-              <p>Nationwide Delivery</p>
             </div>
           </div>
 
-        </div>
-        <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs">
-          <p>2025 Fatihah Halal Food Japan. All rights reserved.</p>
-          <p>Serving Muslim communities in Japan</p>
+          {/* SHOP */}
+          <div>
+            <h4 className="font-bold text-white text-sm mb-4 uppercase tracking-wide">Shop</h4>
+            <div className="space-y-2">
+              {[
+                { label: "All Products", href: "/shop" },
+                { label: "Rice & Grains", href: "/shop?category=rice-grains" },
+                { label: "Halal Meat", href: "/shop?category=halal-meat" },
+                { label: "Fish & Seafood", href: "/shop?category=fish-seafood" },
+                { label: "Spices & Masala", href: "/shop?category=spices-masala" },
+                { label: "Drinks & Juices", href: "/shop?category=drinks-juices" },
+              ].map((link) => (
+                <Link key={link.label} href={link.href} className="block text-gray-400 text-xs hover:text-green-400 transition-colors">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* HELP */}
+          <div>
+            <h4 className="font-bold text-white text-sm mb-4 uppercase tracking-wide">Help</h4>
+            <div className="space-y-2">
+              {[
+                { label: "How to Order", href: "/how-to-order" },
+                { label: "Delivery Info", href: "/how-to-order" },
+                { label: "FAQ", href: "/how-to-order" },
+                { label: "About Us", href: "/about" },
+                { label: "Contact Us", href: "/contact" },
+              ].map((link) => (
+                <Link key={link.label} href={link.href} className="block text-gray-400 text-xs hover:text-green-400 transition-colors">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* CONTACT */}
+          <div>
+            <h4 className="font-bold text-white text-sm mb-4 uppercase tracking-wide">Contact</h4>
+            <div className="space-y-3">
+              <div className="flex items-start gap-2">
+                <span className="text-base">📍</span>
+                  <span className="text-gray-400 text-xs leading-relaxed">
+                      1549-1 105, Sakai,<br />Sashima District,<br />Ibaraki 306-0433, Japan
+                  </span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-base">🕐</span>
+                <span className="text-gray-400 text-xs leading-relaxed">Mon–Sat: 10AM–8PM<br />Sun: 11AM–6PM</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-base">💬</span>
+                <span className="text-gray-400 text-xs leading-relaxed">LINE: @fhfhalal</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-base">📧</span>
+                <span className="text-gray-400 text-xs leading-relaxed break-all">info@fatihahhalalfood.com</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
+
+      {/* TRUST BAR */}
+      <div className="border-t border-gray-800">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8 text-xs text-gray-500">
+            <span>✅ 100% Halal Certified</span>
+            <span>🚚 Japan Nationwide Delivery</span>
+            <span>💴 Cash on Delivery</span>
+            <span>💬 LINE Support</span>
+            <span>🏪 Physical Store in Japan</span>
+          </div>
+        </div>
+      </div>
+
+      {/* COPYRIGHT */}
+      <div className="border-t border-gray-800">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-2">
+          <p className="text-gray-500 text-xs">
+            © 2026 Fatihah Halal Food. All rights reserved.
+          </p>
+          <p className="text-gray-600 text-xs">
+            Serving the Muslim community in Japan
+          </p>
+        </div>
+      </div>
+
     </footer>
   )
 }
